@@ -35,3 +35,13 @@ jobs:
         with:
           name: fastgithub-arm
           path: ./publish/FastGithub
+
+      - name: Create Release and Upload Asset
+        uses: softprops/action-gh-release@v2
+        with:
+          tag_name: arm-build-${{ github.run_number }}
+          name: FastGithub ARM Build ${{ github.run_number }}
+          body: "Automated build of FastGithub for ARM (linux-arm).\nDownload and run on OneCloud or any ARMv7 device."
+          files: ./publish/FastGithub
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
