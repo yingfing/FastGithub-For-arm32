@@ -1,0 +1,37 @@
+name: Build FastGithub for ARM
+
+on:
+  workflow_dispatch:
+  push:
+    branches: [ main, master ]
+
+jobs:
+  build:
+    runs-on: ubuntu-22.04
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup .NET SDK
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: '8.0.x'
+
+      - name: Restore
+        run: dotnet restore
+
+      - name: Publish for linux-arm (no GUI)
+        run: |
+          dotnet publish FastGithub/FastGithub.csproj \
+            -c Release -r linux-arm -o ./publish \
+            --self-contained true \
+            -p:PublishSingleFile=true \
+            -p:PublishTrimmed=true \
+            -p:DebugType=none \
+            -p:DebugSymbols=false
+
+      - name: Upload artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: fastgithub-arm
+          path: ./publish/FastGithub
