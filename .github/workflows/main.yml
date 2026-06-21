@@ -5,43 +5,11 @@ on:
   push:
     branches: [ main, master ]
 
+permissions:
+  contents: write    # <--- 添加这一行，允许创建 Release
+
 jobs:
   build:
     runs-on: ubuntu-22.04
     steps:
-      - name: Checkout
-        uses: actions/checkout@v4
-
-      - name: Setup .NET SDK
-        uses: actions/setup-dotnet@v4
-        with:
-          dotnet-version: '8.0.x'
-
-      - name: Restore
-        run: dotnet restore
-
-      - name: Publish for linux-arm (no GUI)
-        run: |
-          dotnet publish FastGithub/FastGithub.csproj \
-            -c Release -r linux-arm -o ./publish \
-            --self-contained true \
-            -p:PublishSingleFile=true \
-            -p:PublishTrimmed=true \
-            -p:DebugType=none \
-            -p:DebugSymbols=false
-
-      - name: Upload artifact
-        uses: actions/upload-artifact@v4
-        with:
-          name: fastgithub-arm
-          path: ./publish/FastGithub
-
-      - name: Create Release and Upload Asset
-        uses: softprops/action-gh-release@v2
-        with:
-          tag_name: arm-build-${{ github.run_number }}
-          name: FastGithub ARM Build ${{ github.run_number }}
-          body: "Automated build of FastGithub for ARM (linux-arm).\nDownload and run on OneCloud or any ARMv7 device."
-          files: ./publish/FastGithub
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      # ... 其余步骤保持不变
